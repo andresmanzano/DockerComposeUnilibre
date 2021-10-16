@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  api-service:
+    build: ./api
+    links:
+      - db
+    volumes:
+      - ./api:/usr/src/app
+    ports:
+      - 5001:80
+
+  website:
+    build: ./web
+    volumes:
+      - ./web:/var/www/html
+    ports:
+      - 5000:80
+    depends_on:
+      - api-service
+    links:
+      - api-service
+
+  db:
+    image: mysql:8.0.21
+    ports:
+      - "30000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+ 
